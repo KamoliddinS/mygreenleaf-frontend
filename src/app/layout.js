@@ -1,4 +1,5 @@
 import './global.css'
+import { Toaster } from 'sonner';
 
 export const metadata = {
   title: "My Marketplace",
@@ -8,7 +9,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Toaster richColors closeButton position='top-right' />
+        {children}
+        </body>
     </html>
   );
 }

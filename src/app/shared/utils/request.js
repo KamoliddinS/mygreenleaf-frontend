@@ -2,8 +2,8 @@ import axios from 'axios';
 import humps from 'humps';
 import * as Sentry from '@sentry/react';
 
-export const domain =
-  import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}`;
+export const domain = process.env.NEXT_PUBLIC_API_BASE_URL || `${window.location.protocol}//${window.location.hostname}`;
+    
 
 //  Add Base URL and change snake_case to camelCase
 const baseAxios = axios.create({

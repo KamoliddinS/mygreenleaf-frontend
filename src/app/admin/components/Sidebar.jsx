@@ -15,11 +15,15 @@ import {
   Settings,
   UserCircle,
 } from "lucide-react";
+import { useLoad } from "@/app/shared/hooks/requests";
+import { ME } from "@/app/shared/utils/urls";
 
 const sidebarItems = [
   { name: "Dashboard", icon: LayoutDashboard, href: "/admin" },
   { name: "Orders", icon: ShoppingCart, href: "/admin/orders" },
-  { name: "Catalog", icon: Package, href: "/admin/catalog" },
+  { name: "Catalogue", icon: Package, href: "/admin/catalogue" },
+  {name: "Brands", icon: Package, href: "/admin/brands"},
+  {name: "Products", icon: Package, href: "/admin/products" },
   { name: "Inventory", icon: Package, href: "/admin/inventory" },
   { name: "Customers", icon: Users, href: "/admin/customers" },
   { name: "Promotions", icon: Tag, href: "/admin/promotions" },
@@ -32,6 +36,9 @@ const sidebarItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const loadMe = useLoad({url: ME}, [])
+  const me  = loadMe.response ? loadMe.response : []
+  
 
   return (
     <div className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col justify-between">
@@ -73,8 +80,8 @@ export default function Sidebar() {
           <UserCircle className="text-gray-700" size={28} />
         </div>
         <div>
-          <p className="text-sm font-semibold text-gray-800">Admin User</p>
-          <p className="text-xs text-gray-500">admin@greenleaf.uz</p>
+          <p className="text-sm font-semibold text-gray-800">{me?.role}</p>
+          <p className="text-xs text-gray-500">{me?.email}</p>
         </div>
       </div>
     </div>

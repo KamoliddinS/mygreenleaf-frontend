@@ -1,8 +1,10 @@
+"use client"
+import { clearStorage } from "@/app/shared/utils/session";
+
 export default function SettingPage() {
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-4">Orders</h1>
-      <p>Here you can manage all orders 🧾</p>
+      <button onClick={clearStorage}>Logout</button>
     </div>
   );
 }

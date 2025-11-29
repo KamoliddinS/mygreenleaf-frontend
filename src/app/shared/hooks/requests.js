@@ -22,6 +22,10 @@ export function useDeleteRequest(options = {}) {
   return useRequest({ method: 'DELETE', ...options });
 }
 
+export function usePatchRequest(options = {}) {
+  return useRequest({ method: "PATCH", ...options });
+}
+
 export function useRequest(options = {}) {
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);

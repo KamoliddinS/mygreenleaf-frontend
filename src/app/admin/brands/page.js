@@ -1,46 +1,38 @@
+"use client"
 import Table from "../components/Table";
 import { CatalogCard } from "./components/card";
 import { Search } from "lucide-react";
 import { TableItems } from "./components/TableItems";
+import {  useLoad } from "@/app/shared/hooks/requests";
+import { BRAND, CATALOGUE } from "@/app/shared/utils/urls";
+import { Create } from "./features/Create";
 
 const columns = [
-  "Products",
-  "SKU",
   "Category",
-  "Price",
-  "Stock",
-  "Status",
+  "CreatedAt",
   "Action"
 ]
 
-export default function CatalogPage() {
-  const orders = [
-    {
-      product: "Bamboo Toothbrush Set",
-      type: "Eco-friendly bamboo toothbrushes",
-      sku: "ECO-TOOTH-001",
-      category: "personal-care",
-      price: "45,000",
-      stock: "62",
-      status: 'Visible'
-    }
-  ]
+export default function BrandsPage() {
+  const loadBrand = useLoad({url: BRAND}, [])
+  const data = loadBrand.response ? loadBrand.response : []
+
   return (
     <div className="w-full flex flex-col gap-[20px]">
       {/* Header */}
       <div className="w-full flex items-center justify-between">
         <div className="flex flex-col items-start">
-          <h1 className="text-2xl font-semibold">Catalog Management</h1>
+          <h1 className="text-2xl font-semibold">Brands Management</h1>
         <p className="text-gray-500">
           Manage products, categories, and inventory
         </p>
         </div>
-        <button className="text-white rounded-[10px] text-[14px] bg-green-700 py-[6px] px-[15px]">+ Add Product</button>
+        <Create setData={loadBrand.setResponse} />
       </div>
 
       {/* Stat Cards */}
       <div className="w-full grid grid-cols-4 gap-[20px]">
-        <CatalogCard title="Total Products" value={6} />
+        <CatalogCard title="Total Brands" value={data?.length} />
         <CatalogCard title="Visible" value={6} />
         <CatalogCard title="Low Stock" value={0} />
         <CatalogCard title="Out of Stock" value={0} />
@@ -70,7 +62,7 @@ export default function CatalogPage() {
       </div>
 
       {/* table */}
-      <Table columns={columns} data={orders} RowComponent={TableItems} />
+      <Table columns={columns} data={data} RowComponent={TableItems} setData={loadBrand.setResponse} />
     </div>
   );
 }

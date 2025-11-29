@@ -3,7 +3,7 @@ export default function CustomerLayout({ children }) {
     <html lang="en">
       <body>
         <header>
-          <a href="/">Home</a> | <a href="/admin">Admin</a>
+          <a href="/">Home</a> | <a href="/auth/login">AUTH</a>
         </header>
         <main>{children}</main>
       </body>

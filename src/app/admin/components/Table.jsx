@@ -10,6 +10,7 @@ import React from "react";
  * - className: optional extra styles
  */
 export default function Table({
+  setData,
   columns = [],
   data = [],
   RowComponent,
@@ -38,7 +39,7 @@ export default function Table({
           <tbody>
             {data.length > 0 ? (
               data.map((item, idx) => (
-                <RowComponent key={idx} item={item} />
+                <RowComponent key={idx} item={item} setData={setData} />
               ))
             ) : (
               <tr>
