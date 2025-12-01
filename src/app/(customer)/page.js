@@ -1,7 +1,36 @@
+"use client";
+
+import ProductCard from "./components/ProductCard";
+import { Filter } from "./filter/page";
+import imagedish from '../../../public/images/dishwash.png'
+import { useLoad } from "../shared/hooks/requests";
+import { PRODUCTS } from "../shared/utils/urls";
+import { BottomCartBar } from "./components/BottomCartbar";
+
 export default function CustomerHome() {
+  const loadProducts = useLoad({ url: PRODUCTS }, []);
+  const products = loadProducts.response ? loadProducts.response : [];
+
   return (
-    <div>
-      <h1>Welcome to the Customer Store 🛍️</h1>
+    <div className="w-full relative pb-[120px]">
+      <Filter />
+      <div className="w-full grid md:grid-cols-3 pt-[30px] grid-cols-1 lg:grid-cols-4 gap-[20px]">
+        {products.map((product, index) => (
+          <ProductCard
+            key={index}
+            title={product.title}
+            description={product.description}
+            tag={product.tag}
+            rating={product.rating}
+            reviews={product.reviews}
+            price={product.price}
+            data={product}
+          />
+        ))}
+      </div>
+
+      {/* 👇 Bottom bar */}
+      <BottomCartBar />
     </div>
   );
 }

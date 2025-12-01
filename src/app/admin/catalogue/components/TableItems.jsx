@@ -1,6 +1,7 @@
 import { Eye } from "lucide-react"
 import { Update } from "../features/Update"
 import { Delete } from "../features/Delete"
+import moment from "moment"
 
 
 export const TableItems = ({item, setData}) => {
@@ -13,7 +14,7 @@ export const TableItems = ({item, setData}) => {
                     </div>
                 </div>
             </td>
-            <td className="px-4 py-3 text-sm">{item.catalogueId}</td>
+            <td className="px-4 py-3 text-sm">{moment(item.createdAt).format("HH:mm:ss")}</td>
             <td className="px-4 py-3 text-sm flex items-center gap-[15px]">
                <Update id={item.id} data={item?.title} setData={setData} />
                <Delete id={item.id} setData={setData} />

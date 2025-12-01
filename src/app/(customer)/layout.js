@@ -1,11 +1,17 @@
+import { Header } from "./components/Header";
+import { PromoCode } from "./components/PromoCode";
+
 export default function CustomerLayout({ children }) {
   return (
     <html lang="en">
       <body>
         <header>
-          <a href="/">Home</a> | <a href="/auth/login">AUTH</a>
+          <Header />
         </header>
-        <main>{children}</main>
+        <section>
+          <PromoCode />
+        </section>
+        <main className="px-4">{children}</main>
       </body>
     </html>
   );

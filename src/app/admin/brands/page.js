@@ -10,6 +10,7 @@ import { Create } from "./features/Create";
 const columns = [
   "Category",
   "CreatedAt",
+  "UpdatedAt",
   "Action"
 ]
 
