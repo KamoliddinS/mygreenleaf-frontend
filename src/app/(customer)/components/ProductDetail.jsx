@@ -5,6 +5,75 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useCartStore } from "./store/cartStore";
 
+const ImageSlider = ({ images }) => {
+  const [index, setIndex] = useState(0);
+
+  const nextSlide = () => {
+    setIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevSlide = () => {
+    setIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  if (!images || images.length === 0) return null;
+
+  return (
+    <div className="relative w-full h-[425px] overflow-hidden rounded-xl bg-gray-100 shadow-md">
+      {/* Slides */}
+      <div
+        className="flex transition-transform duration-500"
+        style={{ transform: `translateX(-${index * 100}%)` }}
+      >
+        {images.map((img, i) => (
+          <div key={i} className="min-w-full h-[425px] flex items-center justify-center">
+            <Image
+              src={img.imageUrl || img} // backend format flexible
+              width={600}
+              height={450}
+              alt="Product Image"
+              className="object-contain w-full h-full"
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Left button */}
+      {images.length > 1 && (
+        <button
+          onClick={prevSlide}
+          className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white p-2 rounded-full shadow-md"
+        >
+          ‹
+        </button>
+      )}
+
+      {/* Right button */}
+      {images.length > 1 && (
+        <button
+          onClick={nextSlide}
+          className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white p-2 rounded-full shadow-md"
+        >
+          ›
+        </button>
+      )}
+
+      {/* Pagination dots */}
+      <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+        {images.map((_, i) => (
+          <div
+            key={i}
+            onClick={() => setIndex(i)}
+            className={`w-3 h-3 rounded-full cursor-pointer transition ${
+              index === i ? "bg-green-600 scale-110" : "bg-gray-300"
+            }`}
+          ></div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export const ProductDetail = ({ open, onClose, data, image }) => {
   const [userRating, setUserRating] = useState(0);
   const [showComment, setShowComment] = useState(false);
@@ -72,13 +141,7 @@ export const ProductDetail = ({ open, onClose, data, image }) => {
         <div className="pt-[60px] pb-[120px] overflow-auto h-full px-4">
           <div className="w-full flex flex-col items-center gap-[20px]">
             <div className="w-full h-[425px]">
-              <Image
-                src={image}
-                alt={data?.title}
-                width={500}
-                height={400}
-                className="w-full h-full object-contain"
-              />
+              <ImageSlider images={data?.productImages || []} />
             </div>
 
             <div className="w-full flex flex-col gap-[15px]">

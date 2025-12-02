@@ -11,7 +11,7 @@ const data = [
   { value: "food", label: "Food & Beverages" },
 ];
 
-export const Filter = () => {
+export default function Filter() {
   const [active, setActive] = useState("ALL"); // default active
 
   const handleClick = (value) => {

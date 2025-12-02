@@ -1,11 +1,10 @@
-"use client";
+"use client"
 
 import ProductCard from "./components/ProductCard";
-import { Filter } from "./filter/page";
-import imagedish from '../../../public/images/dishwash.png'
 import { useLoad } from "../shared/hooks/requests";
 import { PRODUCTS } from "../shared/utils/urls";
 import { BottomCartBar } from "./components/BottomCartbar";
+import Filter from "./components/Filter";
 
 export default function CustomerHome() {
   const loadProducts = useLoad({ url: PRODUCTS }, []);
