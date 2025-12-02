@@ -7,6 +7,7 @@ const nextConfig = {
     domains: ['s3.mygreenleaf.uz']
   },
   reactCompiler: true, // keep your setting
+  output: "standalone",
 };
 
 export default nextConfig;

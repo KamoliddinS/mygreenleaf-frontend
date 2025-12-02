@@ -1,0 +1,29 @@
+networks:
+  attendance_management_network:
+    external: true
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mygreenleaf_frontend
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.routers.frontend.rule=Host(`www.mygreenleaf.uz`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+
+      - "traefik.http.middlewares.redirect-www.redirectregex.regex=^https://mygreenleaf\\.uz(.*)"
+      - "traefik.http.middlewares.redirect-www.redirectregex.replacement=https://www.mygreenleaf.uz$1"
+      - "traefik.http.middlewares.redirect-www.redirectregex.permanent=true"
+
+      - "traefik.http.routers.frontend-redirect.rule=Host(`mygreenleaf.uz`)"
+      - "traefik.http.routers.frontend-redirect.entrypoints=websecure"
+      - "traefik.http.routers.frontend-redirect.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.frontend-redirect.middlewares=redirect-www"
+    networks:
+      - attendance_management_network
+    restart: always
