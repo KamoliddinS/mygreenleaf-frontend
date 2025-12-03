@@ -61,6 +61,7 @@ export const Create = ({ setData }) => {
       catalogue_id: data.catalogue,
       brand_id: data.brand,
       stock_count: data.stock,
+      barcode: data.barcode,
       product_images, // send as array of objects
     };
 
@@ -123,6 +124,17 @@ export const Create = ({ setData }) => {
                            focus:border-green-500 focus:ring-2 focus:ring-green-400 transition outline-none"
               ></textarea>
             </div>
+
+            <CustomInput
+                label="Barcode"
+                placeholder="Enter barcode"
+                value={watch("barcode") || ""}
+                onChange={(v) => {
+                  // keep string, restrict to numeric characters
+                  const cleaned = v.replace(/\D/g, "");
+                  setValue("barcode", cleaned);
+                }}
+                 />
 
             {/* Price + Brand */}
             <div className="flex gap-3">

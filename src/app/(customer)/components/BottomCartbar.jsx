@@ -2,9 +2,11 @@
 
 import { MoveRight } from "lucide-react";
 import { useCartStore } from "./store/cartStore";
+import { useGlobalContext } from "./context/GlobalContext";
 
 export const BottomCartBar = () => {
   const cart = useCartStore((state) => state.cart);
+  const {openCart, setOpenCart} = useGlobalContext()
 
   // Compute total items and price here
   const totalItems = Object.values(cart).reduce((sum, item) => sum + item.qty, 0);
@@ -19,7 +21,7 @@ export const BottomCartBar = () => {
       flex items-center border justify-between
       shadow-xl
     ">
-      <div className="w-full bg-green-700 px-[20px] rounded-[20px] py-[15px] flex items-center justify-between">
+      <div onClick={() => setOpenCart(true)} className="w-full bg-green-700 px-[20px] rounded-[20px] py-[15px] flex items-center justify-between">
         <div>
         <p className="text-md font-semibold">{totalItems} items</p>
       </div>

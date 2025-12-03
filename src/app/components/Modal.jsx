@@ -1,8 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 export default function Modal({ open, onClose, children }) {
+  const [mounted, setMounted] = useState(false);
+
+  // Avoid hydration mismatch (Next.js SSR)
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Close on ESC
   useEffect(() => {
     const handleEsc = (e) => {
@@ -12,15 +20,15 @@ export default function Modal({ open, onClose, children }) {
     return () => window.removeEventListener("keydown", handleEsc);
   }, [onClose]);
 
-  if (!open) return null;
+  if (!mounted || !open) return null;
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
       onClick={onClose}
     >
       <div className="relative">
-        {/* Floating Close Button (outside modal box) */}
+        {/* Floating Close Button */}
         <button
           onClick={onClose}
           aria-label="Close modal"
@@ -48,6 +56,7 @@ export default function Modal({ open, onClose, children }) {
           {children}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body // 👈 Portal target (IMPORTANT!)
   );
 }

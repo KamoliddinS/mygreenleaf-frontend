@@ -1,24 +1,28 @@
 "use client"
 import Table from "../components/Table";
 import { CatalogCard } from "./components/card";
-import { Search } from "lucide-react";
+import { DotIcon, MinusIcon, MoveRight, PlusIcon, Search } from "lucide-react";
 import { TableItems } from "./components/TableItems";
 import {  useLoad } from "@/app/shared/hooks/requests";
-import { PRODUCTS } from "@/app/shared/utils/urls";
+import { INVENTORY, PRODUCTS } from "@/app/shared/utils/urls";
 import { Create } from "./features/Create";
+import moment from "moment";
 
 const columns = [
   "Products",
   "Description",
-  "Category",
+  "Barcode",
   "Price",
   "Stock",
+  "Inventory",
   "Action"
 ]
 
 export default function ProductsPage() {
   const loadProducts = useLoad({url: PRODUCTS}, [])
   const products = loadProducts.response ? loadProducts.response : []
+  const loadRecents = useLoad({url: INVENTORY}, [])
+  const recents = loadRecents?.response ? loadRecents?.response : []
 
   return (
     <div className="w-full flex flex-col gap-[20px]">
@@ -65,7 +69,41 @@ export default function ProductsPage() {
       </div>
 
       {/* table */}
-      <Table columns={columns} data={products} RowComponent={TableItems} setData={loadProducts.setResponse} />
+      <Table columns={columns} data={products} RowComponent={TableItems} setData={loadProducts.setResponse} setRecent={loadRecents.setResponse} />
+
+      <div className="w-full rounded-[10px] border p-5 flex flex-col items-start gap-[20px]">
+        <span className="text-[16px]">Recent Stock Adjustments</span>
+        {recents?.map((item) => (
+          <div key={item.id} className="p-4 rounded-[10px] bg-[#f5f5f0] flex items-center justify-between w-full">
+          <div className="flex items-center gap-[10px]">
+            <div className={`p-4 rounded-[20px] ${item.adjustmentType === 'Addition' ? 'bg-green-600/10' : 'bg-red-600/10'}`}>
+             {item.adjustmentType === 'Addition' && (
+               <PlusIcon size={16} className="text-green-600 font-bold" />
+             )}
+             {item.adjustmentType === 'Removal' && (
+               <MinusIcon size={16} className="text-red-600 font-bold" />
+             )}
+            </div>
+            <div className="flex flex-col items-start">
+              <span className="text-[16px] font-[500]">{item.product?.title}</span>
+              <div className="flex text-[13px] items-center text-gray-500 items-center">
+                <span>Added {item.quantity}</span>
+                <DotIcon size={20} />
+                <span>{item.reason}</span>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col items-end">
+            <div className="flex text-[14px] gap-[3px] items-center">
+              <span>{item.oldStockCount}</span>
+              <MoveRight size={15} />
+              <span>{item.quantity + item.oldStockCount}</span>
+            </div>
+            <span className="text-[12px] text-gray-400">{moment(item.createdAt).format('HH:mm:ss A')}</span>
+          </div>
+        </div>
+        ))}
+      </div>
     </div>
   );
 }

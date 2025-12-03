@@ -4,6 +4,10 @@ import { Plus, Minus, Share2, Star, UserIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useCartStore } from "./store/cartStore";
+import { useLoad, usePostRequest } from "@/app/shared/hooks/requests";
+import { RATING } from "@/app/shared/utils/urls";
+import { toast } from "sonner";
+import { useGlobalContext } from "./context/GlobalContext";
 
 const ImageSlider = ({ images }) => {
   const [index, setIndex] = useState(0);
@@ -75,13 +79,16 @@ const ImageSlider = ({ images }) => {
 };
 
 export const ProductDetail = ({ open, onClose, data, image }) => {
+  const userId = localStorage.getItem('userId')
   const [userRating, setUserRating] = useState(0);
   const [showComment, setShowComment] = useState(false);
   const [commentText, setCommentText] = useState("");
-  const [comments, setComments] = useState([
-    { rating: 5, text: "Amazing product!" },
-    { rating: 4, text: "Good quality, but a bit expensive." },
-  ]);
+  const postRating = usePostRequest({url: RATING})
+  const loadRating = useLoad({url: RATING, params: {product_id: data?.id}}, [])
+  const rating = loadRating?.response ? loadRating?.response : []
+  const setData = loadRating?.setResponse
+  const {setOpenCart} = useGlobalContext()
+  
 
   // Zustand cart
   const addItem = useCartStore((s) => s.addItem);
@@ -103,13 +110,29 @@ export const ProductDetail = ({ open, onClose, data, image }) => {
     setShowComment(true);
   };
 
-  const handleCommentSubmit = () => {
+  const handleCommentSubmit = async () => {
     if (!commentText) return;
-    setComments([...comments, { rating: userRating, text: commentText }]);
-    setCommentText("");
-    setShowComment(false);
-    setUserRating(0);
+    const {success, response} = await postRating.request({
+      data: {
+        product_id: data?.id,
+        user_id: userId,
+        value: userRating,
+        commentary: commentText
+      }
+    })
+    if(success) {
+      toast.success("Ovozingiz uchun rahmat !")
+      setCommentText("");
+      setShowComment(false);
+      setUserRating(0);
+      setData?.((prev) => [...(prev || []), response]);
+    }
   };
+
+  const handleRedirect = () => {
+    onClose()
+    setOpenCart(true)
+  }
 
   return (
     <div
@@ -216,7 +239,7 @@ export const ProductDetail = ({ open, onClose, data, image }) => {
 
               {/* Comments list */}
               <div className="flex rounded-[5px] flex-col gap-[30px] mt-4">
-                {comments.map((c, idx) => (
+                {rating.map((c, idx) => (
                   <div key={idx} className="flex items-center gap-[10px]">
                     <div className="p-2 border rounded-[20px]">
                       <UserIcon size={15} className="text-gray-600/50" />
@@ -228,14 +251,14 @@ export const ProductDetail = ({ open, onClose, data, image }) => {
                           <Star
                             key={i}
                             className={`w-4 h-4 ${
-                              i <= c.rating
+                              i <= c.value
                                 ? "text-yellow-400"
                                 : "text-gray-300"
                             }`}
                           />
                         ))}
                       </div>
-                      <p className="text-gray-600">{c.text}</p>
+                      <p className="text-gray-600">{c.commentary}</p>
                     </div>
                   </div>
                 ))}
@@ -281,7 +304,7 @@ export const ProductDetail = ({ open, onClose, data, image }) => {
 
               {/* DONE BUTTON */}
               <button
-                onClick={onClose}
+                onClick={handleRedirect}
                 className="flex items-center justify-center px-6 py-3 rounded-lg bg-gray-200 hover:bg-gray-300 font-medium"
               >
                 Done

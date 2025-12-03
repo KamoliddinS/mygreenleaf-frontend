@@ -60,6 +60,7 @@ export const Update = ({ setData, id, data }) => {
       catalogue_id: formData.catalogue,
       brand_id: formData.brand,
       stock_count: formData.stock,
+      barcode: formData.barcode,
       ...(base64Images.length > 0 && {
         product_images: base64Images.map((img) => ({ image_base64: img })),
       }),
@@ -90,6 +91,7 @@ export const Update = ({ setData, id, data }) => {
       stock: data?.stockCount || "",
       catalogue: data?.catalogueId || 0,
       brand: data?.brandId || 0,
+      barcode: data?.barcode || ""
     });
     setBase64Images([]);
   };
@@ -141,6 +143,17 @@ export const Update = ({ setData, id, data }) => {
                 className="w-full px-4 h-[70px] py-2 rounded-xl border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-400 transition outline-none"
               ></textarea>
             </div>
+
+            <CustomInput
+              label="Barcode"
+              placeholder="Enter barcode"
+              value={watch("barcode") || ""}
+              onChange={(v) => {
+                // keep string, restrict to numeric characters
+                const cleaned = v.replace(/\D/g, "");
+                setValue("barcode", cleaned);
+              }}
+            />
 
             {/* Price + Brand */}
             <div className="flex gap-3">

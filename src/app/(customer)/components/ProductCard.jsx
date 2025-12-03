@@ -5,17 +5,28 @@ import Image from "next/image";
 import { useState } from "react";
 import { ProductDetail } from "./ProductDetail";
 import { useCartStore } from "./store/cartStore";
+import { useLoad } from "@/app/shared/hooks/requests";
+import { RATING } from "@/app/shared/utils/urls";
 
 export default function ProductCard({
   title,
   description,
   price,
   tag,
-  rating = 0,
   reviews = 0,
   data
 }) {
+  const userId = localStorage.getItem('userId')
   const [open, setOpen] = useState(false);
+  const loadRating = useLoad({url: RATING, params: {product_id: data?.id}})
+  const rating = loadRating?.response ? loadRating?.response : []
+  const averageRating =
+  rating.length > 0
+    ? (
+        rating.reduce((sum, r) => sum + (r?.value || 0), 0) /
+        rating.length
+      ).toFixed(1)
+    : 0;
 
   const addItem = useCartStore((state) => state.addItem);
   const removeItem = useCartStore((state) => state.removeItem);
@@ -79,7 +90,7 @@ export default function ProductCard({
           {/* Rating */}
           <div className="flex items-center gap-1 mt-2">
             <Star size={16} className="text-yellow-500 fill-yellow-500" />
-            <span className="text-gray-900 font-medium">{rating}</span>
+            <span className="text-gray-900 font-medium">{averageRating}</span>
             <span className="text-gray-500 text-sm">({reviews})</span>
           </div>
 

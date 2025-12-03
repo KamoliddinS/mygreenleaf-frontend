@@ -24,13 +24,12 @@ const sidebarItems = [
   { name: "Catalogue", icon: Package, href: "/admin/catalogue" },
   {name: "Brands", icon: Package, href: "/admin/brands"},
   {name: "Products", icon: Package, href: "/admin/products" },
-  { name: "Inventory", icon: Package, href: "/admin/inventory" },
   { name: "Customers", icon: Users, href: "/admin/customers" },
   { name: "Promotions", icon: Tag, href: "/admin/promotions" },
-  { name: "Payments", icon: CreditCard, href: "/admin/payments" },
-  { name: "Delivery", icon: Truck, href: "/admin/delivery" },
-  { name: "Content", icon: FileText, href: "/admin/content" },
-  { name: "Geofencing", icon: MapPin, href: "/admin/geofencing" },
+  // { name: "Payments", icon: CreditCard, href: "/admin/payments" },
+  // { name: "Delivery", icon: Truck, href: "/admin/delivery" },
+  // { name: "Content", icon: FileText, href: "/admin/content" },
+  // { name: "Geofencing", icon: MapPin, href: "/admin/geofencing" },
   { name: "Settings", icon: Settings, href: "/admin/settings" },
 ];
 

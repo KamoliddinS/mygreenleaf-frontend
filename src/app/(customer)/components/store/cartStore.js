@@ -1,6 +1,5 @@
 "use client";
 import { create } from "zustand";
-import { useEffect } from "react";
 
 const CART_KEY = "cart-data";
 
@@ -48,12 +47,14 @@ export const useCartStore = create((set, get) => ({
       return { cart: updatedCart };
     }),
 
-  deleteItem: (id) => {
-    const updatedCart = { ...get().cart };
-    delete updatedCart[id];
-    get().saveCart(updatedCart);
-    set({ cart: updatedCart });
-  },
+  // ✅ Added deletItem logic
+  deleteItem: (id) =>
+    set((state) => {
+      const updatedCart = { ...state.cart };
+      delete updatedCart[id];
+      get().saveCart(updatedCart);
+      return { cart: updatedCart };
+    }),
 
   clearCart: () => {
     get().saveCart({});

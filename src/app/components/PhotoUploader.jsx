@@ -44,7 +44,7 @@ export default function PhotoUploader({ onChange }) {
       {previews.length > 0 && (
         <div className="flex gap-2 mt-3 overflow-x-auto pb-2">
           {previews.map((src, idx) => (
-            <div key={idx} className="relative w-20 h-20 rounded-lg border overflow-hidden">
+            <div key={idx} className="relative w-5 h-5 rounded-lg border overflow-hidden">
               <img
                 src={src}
                 className="w-full h-full object-cover"

@@ -2,13 +2,21 @@
 
 import ProductCard from "./components/ProductCard";
 import { useLoad } from "../shared/hooks/requests";
-import { PRODUCTS } from "../shared/utils/urls";
+import { ME, PRODUCTS } from "../shared/utils/urls";
 import { BottomCartBar } from "./components/BottomCartbar";
 import Filter from "./components/Filter";
+import { useEffect } from "react";
 
 export default function CustomerHome() {
+  const loadMe = useLoad({url: ME}, [])
   const loadProducts = useLoad({ url: PRODUCTS }, []);
   const products = loadProducts.response ? loadProducts.response : [];
+  const me = loadMe?.response ? loadMe?.response : []
+
+  useEffect(() => {
+    localStorage.setItem('userId', me?.id)
+    localStorage.setItem('email', me?.email)
+  }, [me])
 
   return (
     <div className="w-full relative pb-[120px]">

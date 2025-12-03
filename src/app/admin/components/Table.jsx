@@ -11,6 +11,7 @@ import React from "react";
  */
 export default function Table({
   setData,
+  setRecent,
   columns = [],
   data = [],
   RowComponent,
@@ -27,7 +28,7 @@ export default function Table({
               {columns.map((col, idx) => (
                 <th
                   key={idx}
-                  className="px-4 py-2 text-sm font-semibold text-gray-700"
+                  className="px-4 py-2 text-center text-sm font-semibold text-gray-700"
                 >
                   {col}
                 </th>
@@ -39,7 +40,7 @@ export default function Table({
           <tbody>
             {data.length > 0 ? (
               data.map((item, idx) => (
-                <RowComponent key={idx} item={item} setData={setData} />
+                <RowComponent key={idx} item={item} setData={setData} setRecent={setRecent} />
               ))
             ) : (
               <tr>
