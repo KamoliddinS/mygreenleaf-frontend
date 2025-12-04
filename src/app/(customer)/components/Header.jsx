@@ -38,6 +38,7 @@ export const Header = () => {
       if(success) {
         toast.success("Address added successfuly")
         setOpenLocationModal(false)
+        getMe.request()
       }
   }
 
