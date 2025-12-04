@@ -141,8 +141,13 @@ export const ProductDetail = ({ open, onClose, data, image }) => {
   };
 
   const handleRedirect = () => {
-    onClose()
+    if(!token) {
+      toast.warning("Please register or login to order !")
+    } else {
+      onClose()
     setOpenCart(true)
+    }
+    
   }
 
   const handleClose = () => {

@@ -2,25 +2,49 @@
 
 import { useState, useEffect } from "react";
 import { useCartStore } from "./store/cartStore"; // adjust path if needed
+import { useJsApiLoader } from "@react-google-maps/api";
 import { CartPage } from "./Cart";
 import * as Icons from "lucide-react"; // safer import pattern
 import { useGlobalContext } from "./context/GlobalContext";
 import { LeafIcon } from "./svgs/svg";
 import LocationModal from "./LocationModal";
+import { toast } from "sonner";
+import { useLoad, usePatchRequest } from "@/app/shared/hooks/requests";
+import { ME, USER } from "@/app/shared/utils/urls";
 
 export const Header = () => {
   const [openLocationModal, setOpenLocationModal] = useState(false);
   const [token, setToken] = useState('')
+  const [userId, setUserId] = useState('')
   const [cartSafe, setCartSafe] = useState({});
   const {openCart, setOpenCart} = useGlobalContext()
+  const getMe = useLoad({url: ME})
+  const userInfo = getMe?.response ? getMe?.response : []
+  const postAddress = usePatchRequest({url: `${USER}${userId}`})
   
   // Safely get icons
   const { SearchIcon, ShoppingCart, User, MapPin, ChevronDown } = Icons;
 
-    const handleLocationSelected = (loc) => {
-    console.log("User selected location:", loc);
-    setOpenLocationModal(false); // close modal after selection
+    const handleLocationSelected = async (loc) => {
+      console.log(loc);
+      
+      const {success} = await postAddress.request({
+        data: {
+          address: loc.address,
+          address_longitude: String(loc.longitude),
+          address_latitude: String(loc.latitude),
+        }
+      })
+      if(success) {
+        toast.success("Address added successfuly")
+        setOpenLocationModal(false)
+      }
   }
+
+    const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: "AIzaSyDAfvQNep6qw_BRwuXS8XYGugJgpvSWduU",
+    libraries: ["places"],
+  });
 
   // Get cart from store (client-side only)
   const cart = useCartStore((s) => s.cart || {});
@@ -39,10 +63,20 @@ export const Header = () => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       setToken(localStorage.getItem("token"));
+      setUserId(localStorage.getItem("userId"))
+      
     }
   }, []);
 
   const handleClose = () => setOpenCart(false);
+
+  const handleOpenCart = () => {
+    if(!token) {
+      toast.warning("Please register or login to order !")
+    } else {
+      setOpenCart(true)
+    }
+  }
 
   return (
     <>
@@ -59,10 +93,9 @@ export const Header = () => {
           </div>
 
           {/* Center Box */}
-          <div onClick={() => setOpenLocationModal(true)} className="w-[200px] cursor-pointer px-[10px] h-[30px] flex items-center gap-[10px] border bg-green-600/20 rounded-[10px]">
+          <div onClick={() => setOpenLocationModal(true)} className="cursor-pointer px-[15px] py-[10px] flex items-center gap-[10px] border bg-green-600/20 rounded-[10px]">
             <MapPin size={15} className="text-green-600" />
-            <span className="text-[14px]">Tashkent</span>
-            <ChevronDown size={15} className="text-gray-600" />
+            <span className="text-[12px]">{userInfo?.address?.substring(10)}</span>
           </div>
 
           {/* Right Icons */}
@@ -77,7 +110,7 @@ export const Header = () => {
               </a>
             )}
 
-            <div onClick={() => setOpenCart(true)} className="relative p-[10px] hover:bg-green-100 rounded-[10px] transition duration-300 cursor-pointer">
+            <div onClick={handleOpenCart} className="relative p-[10px] hover:bg-green-100 rounded-[10px] transition duration-300 cursor-pointer">
               {ShoppingCart && (
                 <ShoppingCart
                   size={17}
@@ -114,9 +147,10 @@ export const Header = () => {
       </div>
 
       <LocationModal
-        open={openLocationModal}
+       open={openLocationModal}
         setOpen={setOpenLocationModal}
         onLocationSelected={handleLocationSelected}
+        isLoaded={isLoaded}
       />
 
       {/* CartPage rendered safely */}

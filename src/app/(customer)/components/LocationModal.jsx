@@ -1,7 +1,7 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Crosshair } from "lucide-react";
+import { MapPin } from "lucide-react";
 import {
   GoogleMap,
   Marker,
@@ -29,12 +29,7 @@ export default function LocationModal({
   const searchBoxRef = useRef(null);
   const mapRef = useRef(null);
 
-  const LOCAL_KEY = "_greenleaf_location_dismissed";
-
-  const dismissAndRemember = () => {
-    if (typeof window !== "undefined") localStorage.setItem(LOCAL_KEY, "1");
-    setOpen(false);
-  };
+  const onClose = () => setOpen(false);
 
   const handleUseMyLocation = () => {
     setGeoError("");
@@ -42,6 +37,7 @@ export default function LocationModal({
       setGeoError("Geolocation is not available.");
       return;
     }
+
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
@@ -54,35 +50,33 @@ export default function LocationModal({
   };
 
   const handlePlacesChanged = () => {
-    if (searchBoxRef.current) {
-      const places = searchBoxRef.current.getPlaces();
-      if (places?.length === 0) return;
+    if (!searchBoxRef.current) return;
 
-      const place = places[0];
-      const location = place.geometry.location;
-      const lat = location.lat();
-      const lng = location.lng();
+    const places = searchBoxRef.current.getPlaces();
+    if (!places?.length) return;
 
-      setMarkerPos({ lat, lng });
-      setAddress(place.formatted_address || place.name);
-      mapRef.current?.panTo({ lat, lng });
-      onLocationSelected({ latitude: lat, longitude: lng, address: place.formatted_address });
-    }
+    const place = places[0];
+    const location = place.geometry.location;
+    const lat = location.lat();
+    const lng = location.lng();
+
+    setMarkerPos({ lat, lng });
+    setAddress(place.formatted_address || place.name);
+    mapRef.current?.panTo({ lat, lng });
+    onLocationSelected({ latitude: lat, longitude: lng, address: place.formatted_address });
   };
 
-  // Add custom locate button inside the map
   const onMapLoad = (map) => {
     mapRef.current = map;
 
-    // Create a custom control button
+    // Custom locate button
     const controlDiv = document.createElement("div");
     controlDiv.className = "bg-white rounded-full shadow-md p-2 cursor-pointer";
     controlDiv.style.margin = "10px";
 
     const controlIcon = document.createElement("div");
-    controlIcon.innerHTML = "📍"; // simple icon
+    controlIcon.innerHTML = "📍";
     controlDiv.appendChild(controlIcon);
-
     controlDiv.onclick = handleUseMyLocation;
 
     map.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv);
@@ -105,10 +99,11 @@ export default function LocationModal({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
           >
+            {/* Close button */}
             <button
               aria-label="close"
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-              onClick={dismissAndRemember}
+              onClick={onClose}
             >
               ✕
             </button>
@@ -119,6 +114,7 @@ export default function LocationModal({
               </div>
             </div>
 
+            {/* First screen */}
             {!manualMode ? (
               <>
                 <h2 className="text-xl font-semibold text-center mb-2">
@@ -132,7 +128,7 @@ export default function LocationModal({
                   onClick={handleUseMyLocation}
                   className="w-full flex items-center justify-center gap-[10px] bg-green-600 text-white py-3 rounded-xl font-medium mb-4"
                 >
-                  <MapPin size={20} className="text-white" /> Use My Current Location
+                  <MapPin size={20} /> Use My Current Location
                 </button>
 
                 <button
@@ -148,6 +144,7 @@ export default function LocationModal({
               </>
             ) : (
               <>
+                {/* Manual Address Mode */}
                 {!mapMode ? (
                   <>
                     <h2 className="text-xl font-semibold text-center mb-2">
@@ -169,7 +166,7 @@ export default function LocationModal({
                       onClick={() => setMapMode(true)}
                       className="w-full border border-gray-300 py-3 rounded-xl font-medium mt-2"
                     >
-                      Pick Location from Map
+                      Pick From Map
                     </button>
 
                     <button
@@ -181,6 +178,7 @@ export default function LocationModal({
                   </>
                 ) : (
                   <>
+                    {/* Map Picker */}
                     <h2 className="text-xl font-semibold text-center mb-2">
                       Pick Location on Map
                     </h2>
@@ -200,16 +198,16 @@ export default function LocationModal({
                     <div className="flex justify-between mt-2">
                       <button
                         onClick={() => {
-                          if (markerPos) {
-                            onLocationSelected({
-                              latitude: markerPos.lat,
-                              longitude: markerPos.lng,
-                              address,
-                            });
-                            dismissAndRemember();
-                          } else {
-                            setGeoError("Please select a location on the map.");
+                          if (!markerPos) {
+                            setGeoError("Select a location on map.");
+                            return;
                           }
+                          onLocationSelected({
+                            latitude: markerPos.lat,
+                            longitude: markerPos.lng,
+                            address,
+                          });
+                          onClose();
                         }}
                         className="bg-green-600 text-white py-2 px-4 rounded-xl font-medium"
                       >

@@ -21,7 +21,7 @@ export const ProfileInfo = () => {
               <User className="text-gray-500" size={20} />
               <div>
                 <p className="text-[14px] text-gray-600">Username</p>
-                <p className="text-[15px] font-medium">{userInfo?.phoneNumber ? userInfo?.phoneNumber : userInfo?.username}</p>
+                <p className="text-[15px] font-medium">{userInfo?.username ? userInfo?.username : "-------"}</p>
               </div>
             </div>
 
@@ -39,7 +39,7 @@ export const ProfileInfo = () => {
               <Phone className="text-gray-500" size={20} />
               <div>
                 <p className="text-[14px] text-gray-600">Phone Number</p>
-                <p className="text-[15px] font-medium">{userInfo?.phoneNumber}</p>
+                <p className="text-[15px] font-medium">{userInfo?.phoneNumber ? userInfo?.phoneNumber : '-- --- -- --'}</p>
               </div>
             </div>
 
@@ -49,7 +49,7 @@ export const ProfileInfo = () => {
               <div>
                 <p className="text-[14px] text-gray-600">Address</p>
                 <p className="text-[15px] font-medium">
-                  123 Main Street, Apt 4B, New York, NY 10001
+                  {userInfo.address ? userInfo.address : '-----------'}
                 </p>
               </div>
             </div>
