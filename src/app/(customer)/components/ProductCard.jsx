@@ -13,10 +13,8 @@ export default function ProductCard({
   description,
   price,
   tag,
-  reviews = 0,
   data
 }) {
-  const userId = localStorage.getItem('userId')
   const [open, setOpen] = useState(false);
   const loadRating = useLoad({url: RATING, params: {product_id: data?.id}})
   const rating = loadRating?.response ? loadRating?.response : []
@@ -91,7 +89,7 @@ export default function ProductCard({
           <div className="flex items-center gap-1 mt-2">
             <Star size={16} className="text-yellow-500 fill-yellow-500" />
             <span className="text-gray-900 font-medium">{averageRating}</span>
-            <span className="text-gray-500 text-sm">({reviews})</span>
+            <span className="text-gray-500 text-sm">({rating?.length})</span>
           </div>
 
           {/* Price + Add */}

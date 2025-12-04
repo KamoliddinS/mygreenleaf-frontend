@@ -1,5 +1,6 @@
 export const PRODUCTS = 'product'
 export const AUTH = 'authentication/token'
+export const REGISTER = 'authentication/register'
 export const ME = 'authentication/me'
 export const CATALOGUE = 'catalogue/'
 export const BRAND = 'brand/'

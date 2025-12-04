@@ -79,7 +79,8 @@ const ImageSlider = ({ images }) => {
 };
 
 export const ProductDetail = ({ open, onClose, data, image }) => {
-  const userId = localStorage.getItem('userId')
+  const [token, setToken] = useState('')
+  const [userId, setUserId] = useState('')
   const [userRating, setUserRating] = useState(0);
   const [showComment, setShowComment] = useState(false);
   const [commentText, setCommentText] = useState("");
@@ -88,6 +89,13 @@ export const ProductDetail = ({ open, onClose, data, image }) => {
   const rating = loadRating?.response ? loadRating?.response : []
   const setData = loadRating?.setResponse
   const {setOpenCart} = useGlobalContext()
+
+  useEffect(() => {
+    const tokenInfo = localStorage.getItem("token")
+    const userIdInfo = localStorage.getItem("userId")
+    setToken(tokenInfo)
+    setUserId(userIdInfo)
+  }, [])
   
 
   // Zustand cart
@@ -112,6 +120,9 @@ export const ProductDetail = ({ open, onClose, data, image }) => {
 
   const handleCommentSubmit = async () => {
     if (!commentText) return;
+    if(!token) { 
+      toast.warning("Please login or register to add comment")
+    }
     const {success, response} = await postRating.request({
       data: {
         product_id: data?.id,
@@ -134,10 +145,15 @@ export const ProductDetail = ({ open, onClose, data, image }) => {
     setOpenCart(true)
   }
 
+  const handleClose = () => {
+    onClose()
+    setCommentText("")
+  }
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-      onClick={onClose}
+      onClick={handleClose}
     >
       <div
         className="relative w-full h-full max-w-5xl mx-auto bg-white shadow-lg"
@@ -146,7 +162,7 @@ export const ProductDetail = ({ open, onClose, data, image }) => {
         {/* Header */}
         <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 py-3 bg-white/80 backdrop-blur-md border-b z-10">
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="text-gray-600 hover:text-gray-900 text-2xl font-bold"
           >
             &times;
@@ -181,7 +197,7 @@ export const ProductDetail = ({ open, onClose, data, image }) => {
                     <span>4.9</span>
                   </div>
 
-                  <span className="text-gray-500">(203 reviews)</span>
+                  <span className="text-gray-500">({rating?.length} reviews)</span>
                 </div>
               </div>
 

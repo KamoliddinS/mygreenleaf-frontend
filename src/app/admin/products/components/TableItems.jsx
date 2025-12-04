@@ -6,6 +6,7 @@ import { useState } from "react";
 import { InventoryModal } from "./InventoryModal";
 import Barcode from 'react-barcode';
 
+
 export const TableItems = ({ item, setData, setRecent }) => {
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("");
@@ -64,7 +65,7 @@ export const TableItems = ({ item, setData, setRecent }) => {
             )}
         </td>
         <td className="px-4 py-3 text-sm whitespace-nowrap">
-          {item.price.toLocaleString()} UZS
+          {item.price?.toLocaleString()} UZS
         </td>
 
         <td className="px-4 py-3 text-sm">
@@ -100,7 +101,7 @@ export const TableItems = ({ item, setData, setRecent }) => {
         title={item.title}
         pId={item.id}
         stock={item.stockCount}
-        setData={setRecent}
+        setInventroyData={setRecent}
       />
     </>
   );

@@ -5,13 +5,22 @@ import { useCartStore } from "./store/cartStore"; // adjust path if needed
 import { CartPage } from "./Cart";
 import * as Icons from "lucide-react"; // safer import pattern
 import { useGlobalContext } from "./context/GlobalContext";
+import { LeafIcon } from "./svgs/svg";
+import LocationModal from "./LocationModal";
 
 export const Header = () => {
+  const [openLocationModal, setOpenLocationModal] = useState(false);
+  const [token, setToken] = useState('')
   const [cartSafe, setCartSafe] = useState({});
   const {openCart, setOpenCart} = useGlobalContext()
   
   // Safely get icons
-  const { SearchIcon, ShoppingCart, User } = Icons;
+  const { SearchIcon, ShoppingCart, User, MapPin, ChevronDown } = Icons;
+
+    const handleLocationSelected = (loc) => {
+    console.log("User selected location:", loc);
+    setOpenLocationModal(false); // close modal after selection
+  }
 
   // Get cart from store (client-side only)
   const cart = useCartStore((s) => s.cart || {});
@@ -26,6 +35,13 @@ export const Header = () => {
     0
   );
 
+    // SAFE localStorage access
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setToken(localStorage.getItem("token"));
+    }
+  }, []);
+
   const handleClose = () => setOpenCart(false);
 
   return (
@@ -36,16 +52,26 @@ export const Header = () => {
 
           {/* Logo */}
           <div className="flex items-center gap-[10px]">
-            <div className="w-[50px] h-[50px] border rounded-[50px]" />
-            <span className="text-[16px] md:block hidden font-[700]">GreenLeaf</span>
+            <div className="w-[50px] h-[50px] border bg-green-700 flex flex-col items-center justify-center rounded-[50px]">
+              <LeafIcon />
+            </div>
+            <a href="/" className="text-[16px] md:block hidden font-[700]">GreenLeaf</a>
           </div>
 
           {/* Center Box */}
-          <div className="w-[200px] h-[30px] border bg-green-600/20 rounded-[10px]" />
+          <div onClick={() => setOpenLocationModal(true)} className="w-[200px] cursor-pointer px-[10px] h-[30px] flex items-center gap-[10px] border bg-green-600/20 rounded-[10px]">
+            <MapPin size={15} className="text-green-600" />
+            <span className="text-[14px]">Tashkent</span>
+            <ChevronDown size={15} className="text-gray-600" />
+          </div>
 
           {/* Right Icons */}
           <div className="flex items-center gap-[10px]">
-            {User && (
+            {token ? (
+              <a className="p-[6px] rounded-[20px] bg-gray-200/50" href="/profile">
+                <User size={20} className="text-gray-600" />
+              </a>
+            ) : (
               <a className="p-[6px] rounded-[20px] bg-gray-200/50" href="/auth/login">
                 <User size={20} className="text-gray-600" />
               </a>
@@ -86,6 +112,12 @@ export const Header = () => {
           />
         </div>
       </div>
+
+      <LocationModal
+        open={openLocationModal}
+        setOpen={setOpenLocationModal}
+        onLocationSelected={handleLocationSelected}
+      />
 
       {/* CartPage rendered safely */}
       {CartPage && <CartPage open={openCart} onClose={handleClose} />}

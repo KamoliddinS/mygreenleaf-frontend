@@ -24,7 +24,7 @@ const REMOVE_REASONS = [
 // ===============================
 // INVENTORY MODAL
 // ===============================
-export const InventoryModal = ({ open, onClose, type, title, stock, pId, setData }) => {
+export const InventoryModal = ({ open, onClose, type, title, stock, pId, setInventroyData, setProductData }) => {
 
   const {
     register,
@@ -34,6 +34,9 @@ export const InventoryModal = ({ open, onClose, type, title, stock, pId, setData
     reset,
   } = useForm();
   const postInventory = usePostRequest({url: INVENTORY})
+
+  console.log(setProductData);
+  
 
 
   const onSubmit = async (data) => {
@@ -48,7 +51,7 @@ export const InventoryModal = ({ open, onClose, type, title, stock, pId, setData
    if(success) {
     onClose()
     reset()
-    setData?.((prev) => [...(prev || []), response]);
+    setInventroyData?.((prev) => [...(prev || []), response]);
    }
   };
 

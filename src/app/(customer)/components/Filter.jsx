@@ -1,36 +1,68 @@
 "use client"
 
+import { useLoad } from "@/app/shared/hooks/requests";
+import { BRAND, CATALOGUE } from "@/app/shared/utils/urls";
 import { useState } from "react";
 
-const data = [
-  { value: "ALL", label: "All Products" },
-  { value: "care", label: "Personal Care" },
-  { value: "Home", label: "Home & Kitten" },
-  { value: "bags", label: "Bags & Accessories" },
-  { value: "beaty", label: "Beauty & Skincare" },
-  { value: "food", label: "Food & Beverages" },
-];
+export default function Filter({ setcId, setbId }) {
+  const [activeC, setActiveC] = useState("ALL"); 
+  const [activeB, setActiveB] = useState("ALL");
 
-export default function Filter() {
-  const [active, setActive] = useState("ALL"); // default active
+  const loadCatalogue = useLoad({ url: CATALOGUE }, []);
+  const loadBrand = useLoad({ url: BRAND }, []);
 
-  const handleClick = (value) => {
-    setActive(value); // set active
-    console.log("Selected value:", value); // log to console
+  const catalogues = loadCatalogue?.response || [];
+  const brands = loadBrand?.response || [];
+
+  const handleCatalogueClick = (value) => {
+    setActiveC(value);
+    setcId(value);
   };
 
+  const handleBrandClick = (value) => {
+    setActiveB(value);
+    setbId(value);
+  };
+
+  // Add "ALL" option at the beginning
+  const cataloguesWithAll = [{ id: "ALL", title: "ALL" }, ...catalogues];
+  const brandsWithAll = [{ id: "ALL", title: "ALL" }, ...brands];
+
   return (
-    <div className="flex items-start gap-[20px] overflow-auto">
-      {data.map((item) => (
-        <span
-          key={item.value}
-          onClick={() => handleClick(item.value)}
-          className={`py-[6px] px-[10px] text-[14px] whitespace-nowrap font-medium border rounded-[10px] cursor-pointer 
-            ${active === item.value ? "bg-green-700 text-white border-green-700" : "hover:bg-green-700/20"}`}
-        >
-          {item.label}
-        </span>
-      ))}
+    <div className="flex flex-col">
+      {/* Catalogue Filter */}
+      <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+        {cataloguesWithAll.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => handleCatalogueClick(item.id)}
+            className={`px-4 py-1 text-sm font-medium rounded-full border transition-colors whitespace-nowrap
+              ${activeC === item.id 
+                ? "bg-green-700 text-white border-green-700" 
+                : "bg-white text-gray-700 border-gray-300 hover:bg-green-100"}`
+            }
+          >
+            {item.title}
+          </button>
+        ))}
+      </div>
+
+      {/* Brand Filter */}
+      <div className="flex gap-3 overflow-x-auto pb-1 border-t no-scrollbar pt-2">
+        {brandsWithAll.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => handleBrandClick(item.id)}
+            className={`px-4 py-1 text-sm font-medium rounded-full border transition-colors whitespace-nowrap
+              ${activeB === item.id 
+                ? "bg-green-700 text-white border-green-700" 
+                : "bg-white text-gray-700 border-gray-300 hover:bg-green-100"}`
+            }
+          >
+            {item.title}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

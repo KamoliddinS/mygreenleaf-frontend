@@ -28,7 +28,7 @@ export default function Table({
               {columns.map((col, idx) => (
                 <th
                   key={idx}
-                  className="px-4 py-2 text-center text-sm font-semibold text-gray-700"
+                  className="px-4 py-2  text-sm font-semibold text-gray-700"
                 >
                   {col}
                 </th>
