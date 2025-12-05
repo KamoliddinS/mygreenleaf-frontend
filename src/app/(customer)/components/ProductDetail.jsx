@@ -78,7 +78,7 @@ const ImageSlider = ({ images }) => {
   );
 };
 
-export const ProductDetail = ({ open, onClose, data, image }) => {
+export const ProductDetail = ({ open, onClose, data }) => {
   const [token, setToken] = useState('')
   const [userId, setUserId] = useState('')
   const [userRating, setUserRating] = useState(0);

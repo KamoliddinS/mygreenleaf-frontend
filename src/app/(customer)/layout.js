@@ -4,10 +4,12 @@ import { GlobalProvider } from "./components/context/GlobalContext";
 import { Header } from "./components/Header";
 import { PromoCode } from "./components/PromoCode";
 import CartProvider from "./components/store/CartProvider";
+import CustomerClient from "./CustomerClient";
 
 export default function CustomerLayout({ children }) {
   return (
     <GlobalProvider>
+      <CustomerClient />
       <CartProvider>
         <header>
           <Header />

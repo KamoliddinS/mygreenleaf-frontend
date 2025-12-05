@@ -1,67 +1,151 @@
-import { useLoad } from "@/app/shared/hooks/requests"
+import { useState, useEffect } from "react";
+import { useLoad, usePatchRequest } from "@/app/shared/hooks/requests";
 import { clearStorage } from "@/app/shared/utils/session";
-import { ME } from "@/app/shared/utils/urls"
-import { User, Mail, Phone, MapPin, LogOut} from "lucide-react";
-
+import { ME, USER } from "@/app/shared/utils/urls";
+import { User, Mail, Phone, MapPin, LogOut, Pencil } from "lucide-react";
+import { toast } from "sonner";
 
 export const ProfileInfo = () => {
-    const getUserInfo = useLoad({url: ME})
-    const userInfo = getUserInfo?.response ? getUserInfo?.response : []
-    
-    return (
-        <>
-        <div className="flex flex-col gap-4">
+  const getUserInfo = useLoad({ url: ME });
+  const userInfo = getUserInfo?.response ? getUserInfo?.response : [];
+  const updateUserInfo = usePatchRequest({url: `${USER}${userInfo?.id}`})
 
-          {/* Card */}
-          <div className="bg-white shadow rounded-xl p-6 border">
-            <h2 className="font-semibold text-[17px] mb-4">Personal Information</h2>
+  const [editMode, setEditMode] = useState(false);
 
-            {/* Username */}
-            <div className="flex items-start gap-4 mb-4">
-              <User className="text-gray-500" size={20} />
-              <div>
-                <p className="text-[14px] text-gray-600">Username</p>
-                <p className="text-[15px] font-medium">{userInfo?.username ? userInfo?.username : "-------"}</p>
-              </div>
-            </div>
+  const [username, setUsername] = useState(userInfo?.username || "");
+  const [email, setEmail] = useState(userInfo?.email || "");
+  const [phone, setPhone] = useState(userInfo?.phoneNumber || "");
 
-            {/* Email */}
-            <div className="flex items-start gap-4 mb-4">
-              <Mail className="text-gray-500" size={20} />
-              <div>
-                <p className="text-[14px] text-gray-600">Email</p>
-                <p className="text-[15px] font-medium">{userInfo?.email ? userInfo?.email : '---------'}</p>
-              </div>
-            </div>
+  // Update inputs when userInfo loads
+  useEffect(() => {
+    setUsername(userInfo?.username || "");
+    setEmail(userInfo?.email || "");
+    setPhone(userInfo?.phoneNumber || "");
+  }, [userInfo]);
 
-            {/* Phone */}
-            <div className="flex items-start gap-4 mb-4">
-              <Phone className="text-gray-500" size={20} />
-              <div>
-                <p className="text-[14px] text-gray-600">Phone Number</p>
-                <p className="text-[15px] font-medium">{userInfo?.phoneNumber ? userInfo?.phoneNumber : '-- --- -- --'}</p>
-              </div>
-            </div>
+  const handleSave = async () => {
+    const {success, response} = await updateUserInfo.request({
+      data: {
+        email: email,
+        username: username,
+        phone_number: phone
+      }
+    })
+    if(success) {
+      toast.success("User info updated successfully")
+      setEditMode(false)
+      getUserInfo.request()
+    }
+  };
 
-            {/* Address */}
-            <div className="flex items-start gap-4">
-              <MapPin className="text-gray-500" size={20} />
-              <div>
-                <p className="text-[14px] text-gray-600">Address</p>
-                <p className="text-[15px] font-medium">
-                  {userInfo.address ? userInfo.address : '-----------'}
-                </p>
-              </div>
-            </div>
-          </div>
+  return (
+    <div className="flex flex-col gap-4">
+      
+      {/* Card */}
+      <div className="bg-white shadow rounded-xl p-6 border relative">
 
-          {/* Logout */}
-          <button onClick={clearStorage} className="flex gap-2 items-center px-6 py-3 w-fit bg-red-600 text-white rounded-lg hover:bg-red-700">
-            <LogOut size={18} />
-            Logout
+        {/* Title + edit icon */}
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-semibold text-[17px]">Personal Information</h2>
+
+          <button
+            onClick={() => setEditMode((prev) => !prev)}
+            className="p-2 hover:bg-gray-100 rounded-full transition"
+          >
+            <Pencil className="text-gray-600" size={18} />
           </button>
-
         </div>
-        </>
-    )
-}
+
+        {/* Username */}
+        <div className="flex items-start gap-4 mb-4">
+          <User className="text-gray-500" size={20} />
+          <div className="w-full">
+            <p className="text-[14px] text-gray-600">Username</p>
+
+            {editMode ? (
+              <input
+                className="w-full mt-1 px-3 py-2 border rounded-lg text-[15px]"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            ) : (
+              <p className="text-[15px] font-medium">
+                {userInfo?.username || "-------"}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Email */}
+        <div className="flex items-start gap-4 mb-4">
+          <Mail className="text-gray-500" size={20} />
+          <div className="w-full">
+            <p className="text-[14px] text-gray-600">Email</p>
+
+            {editMode ? (
+              <input
+                className="w-full mt-1 px-3 py-2 border rounded-lg text-[15px]"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            ) : (
+              <p className="text-[15px] font-medium">
+                {userInfo?.email || "---------"}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Phone */}
+        <div className="flex items-start gap-4 mb-4">
+          <Phone className="text-gray-500" size={20} />
+          <div className="w-full">
+            <p className="text-[14px] text-gray-600">Phone Number</p>
+
+            {editMode ? (
+              <input
+                className="w-full mt-1 px-3 py-2 border rounded-lg text-[15px]"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            ) : (
+              <p className="text-[15px] font-medium">
+                {userInfo?.phoneNumber || "-- --- -- --"}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Address */}
+        <div className="flex items-start gap-4">
+          <MapPin className="text-gray-500" size={20} />
+          <div>
+            <p className="text-[14px] text-gray-600">Address</p>
+            <p className="text-[15px] font-medium">
+              {userInfo?.address || "-----------"}
+            </p>
+          </div>
+        </div>
+
+        {/* Save Button */}
+        {editMode && (
+          <button
+            onClick={handleSave}
+            className="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+          >
+            Save Changes
+          </button>
+        )}
+      </div>
+
+      {/* Logout */}
+      <button
+        onClick={clearStorage}
+        className="flex gap-2 items-center px-6 py-3 w-fit bg-red-600 text-white rounded-lg hover:bg-red-700"
+      >
+        <LogOut size={18} />
+        Logout
+      </button>
+    </div>
+  );
+};

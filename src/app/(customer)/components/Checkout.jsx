@@ -1,7 +1,7 @@
 "use client";
 
-import { useLoad, usePatchRequest } from "@/app/shared/hooks/requests";
-import { ME, USER } from "@/app/shared/utils/urls";
+import { useLoad, usePatchRequest, usePostRequest } from "@/app/shared/hooks/requests";
+import { ME, ORDER, USER } from "@/app/shared/utils/urls";
 import {
   CreditCard,
   Dot,
@@ -14,16 +14,18 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useJsApiLoader } from "@react-google-maps/api";
 import LocationModal from "./LocationModal";
+import { useCartStore } from "./store/cartStore";
 
-export const Checkout = ({ open, onClose, data }) => {
+export const Checkout = ({ open, onClose, closeCart, data }) => {
   const [active, setActive] = useState("click");
+  const {clearCart} = useCartStore()
 
   const [openLocationModal, setOpenLocationModal] = useState(false);
   const [userId, setUserId] = useState("");
 
   const getMe = useLoad({ url: ME }, []);
   const userInfo = getMe.response ? getMe.response : [];
-  const setData = getMe.setResponse
+  const postOrder = usePostRequest({url: ORDER})
 
   const postAddress = usePatchRequest({ url: `${USER}${userId}` });
 
@@ -62,6 +64,36 @@ export const Checkout = ({ open, onClose, data }) => {
   );
   const deliveryFee = data.length > 0 ? 15000 : 0;
   const total = subtotal + deliveryFee;
+
+const handleOrder = async () => {
+  if(!userInfo?.address) {
+    toast.warning("Please add your address to order !")
+  } else {
+    // Build order_items from cart data
+  const orderItems = data.map((item) => ({
+    product_id: item.id,
+    quantity: item.qty,
+  }));
+
+  const { success } = await postOrder.request({
+    data: {
+      order_items: orderItems,
+      total_price: total,
+      payment_method: active,  // "click" or "payme"
+      address: userInfo?.address,
+    },
+  });
+
+  if (success) {
+    toast.success("Order placed successfully!");
+    onClose();
+    closeCart();
+    clearCart();
+  } else {
+    toast.error("Something went wrong. Try again!");
+  }
+  }
+};
 
   return (
     <div className="fixed inset-0 bg-black/40 z-[999] w-full h-full flex">
@@ -233,7 +265,7 @@ export const Checkout = ({ open, onClose, data }) => {
               <span>{total.toLocaleString()} UZS</span>
             </div>
 
-            <button className="w-full py-4 bg-[#33683e] text-white rounded-xl text-[17px] font-medium">
+            <button onClick={handleOrder} className="w-full py-4 bg-[#33683e] text-white rounded-xl text-[17px] font-medium">
               Place order ({total.toLocaleString()} UZS)
             </button>
           </div>

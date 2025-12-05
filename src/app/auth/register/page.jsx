@@ -11,14 +11,16 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const postRegister = usePostRequest({url: REGISTER})
 
   const handleRegister = async () => {
-    const data = { username, password };
+    const data = { username, password, email };
     const {success, response} = await postRegister.request({
       data: {
         password: password,
         phone_number: username,
+        email: email,
         delivery_method: "YandexTaxi"
       }
     })
@@ -26,10 +28,12 @@ export default function RegisterPage() {
     if (success) {
       const token = response?.tokens?.accessToken;
       const role = response?.user?.role;
+      const userId = response?.user?.id
 
       // Save to localStorage 
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
+      localStorage.setItem("userId", userId);
 
       // Save to cookies (for middleware)
       document.cookie = `token=${token}; path=/;`;
@@ -55,8 +59,8 @@ export default function RegisterPage() {
 
         <div className="space-y-4">
          <div>
-  <label className="text-gray-600 font-medium text-sm">Phone number</label>
-  <input
+          <label className="text-gray-600 font-medium text-sm">Phone number</label>
+            <input
             type="text"
             className="mt-1 w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition"
             placeholder="+998 91 234 56 78"
@@ -85,6 +89,16 @@ export default function RegisterPage() {
         
               setUsername(formatted);
             }}
+            />
+          </div>
+          <div>
+          <label className="text-gray-600 font-medium text-sm">Email</label>
+            <input
+            type="text"
+            className="mt-1 w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 

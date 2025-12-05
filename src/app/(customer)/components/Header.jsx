@@ -21,9 +21,19 @@ export const Header = () => {
   const getMe = useLoad({url: ME})
   const userInfo = getMe?.response ? getMe?.response : []
   const postAddress = usePatchRequest({url: `${USER}${userId}`})
+
+      // SAFE localStorage access
+useEffect(() => {
+  const tk = localStorage.getItem("token");
+  const id = localStorage.getItem("userId");
+
+  setToken(tk);
+  setUserId(id);
+}, []);
+
   
   // Safely get icons
-  const { SearchIcon, ShoppingCart, User, MapPin, ChevronDown } = Icons;
+  const { SearchIcon, ShoppingCart, User, MapPin } = Icons;
 
     const handleLocationSelected = async (loc) => {
       console.log(loc);
@@ -60,15 +70,6 @@ export const Header = () => {
     0
   );
 
-    // SAFE localStorage access
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setToken(localStorage.getItem("token"));
-      setUserId(localStorage.getItem("userId"))
-      
-    }
-  }, []);
-
   const handleClose = () => setOpenCart(false);
 
   const handleOpenCart = () => {
@@ -86,18 +87,20 @@ export const Header = () => {
         <div className="w-full py-[10px] flex items-center justify-between">
 
           {/* Logo */}
-          <div className="flex items-center gap-[10px]">
+          <a href="/"  className="flex items-center gap-[10px]">
             <div className="w-[50px] h-[50px] border bg-green-700 flex flex-col items-center justify-center rounded-[50px]">
               <LeafIcon />
             </div>
-            <a href="/" className="text-[16px] md:block hidden font-[700]">GreenLeaf</a>
-          </div>
+            <span className="text-[16px] md:block hidden font-[700]">GreenLeaf</span>
+          </a>
 
           {/* Center Box */}
-          <div onClick={() => setOpenLocationModal(true)} className="cursor-pointer px-[15px] py-[10px] flex items-center gap-[10px] border bg-green-600/20 rounded-[10px]">
+          {userId && (
+            <div onClick={() => setOpenLocationModal(true)} className="cursor-pointer px-[15px] py-[10px] flex items-center gap-[10px] border bg-green-600/20 rounded-[10px]">
             <MapPin size={15} className="text-green-600" />
             <span className="text-[12px]">{userInfo?.address?.substring(10)}</span>
           </div>
+          )}
 
           {/* Right Icons */}
           <div className="flex items-center gap-[10px]">

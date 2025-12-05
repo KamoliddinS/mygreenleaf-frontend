@@ -14,7 +14,7 @@ export const clearStorage = () => {
   });
 
   // Redirect
-  window.location.href = '/auth/login';
+  window.location.href = '/';
 };
 
 export const checkTokenExpiration = () => {

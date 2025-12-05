@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { useCartStore } from "./store/cartStore";
 import Image from "next/image";
 import { Checkout } from "./Checkout";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const CartPage = ({ open, onClose }) => {
   // ✅ Always call hooks first
@@ -22,6 +22,18 @@ export const CartPage = ({ open, onClose }) => {
   const increaseQty = (item) => addItem(item);
   const decreaseQty = (id) => removeItem(id);
   const safeDelete = (id) => deleteItem?.(id);
+
+    useEffect(() => {
+  if (open) {
+    document.body.style.overflow = "hidden";   // ❌ disable background scroll
+  } else {
+    document.body.style.overflow = "auto";     // ✅ re-enable scroll
+  }
+
+  return () => {
+    document.body.style.overflow = "auto";     // cleanup
+  };
+}, [open]);
 
   // ✅ If cart is closed, render nothing
   if (!open) return null;
@@ -144,7 +156,7 @@ export const CartPage = ({ open, onClose }) => {
         </div>
       </div>
 
-      <Checkout open={openCheck} onClose={() => setOpenCheck(false)} data={cartItems} />
+      <Checkout open={openCheck} closeCart={onClose} onClose={() => setOpenCheck(false)} data={cartItems} />
     </>
   );
 };

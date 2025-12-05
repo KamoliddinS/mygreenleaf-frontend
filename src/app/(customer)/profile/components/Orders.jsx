@@ -1,11 +1,17 @@
 import { act, useState } from "react"
 import {Calendar, ClipboardList } from "lucide-react";
+import { useLoad } from "@/app/shared/hooks/requests";
+import { ORDER } from "@/app/shared/utils/urls";
+import moment from "moment";
 
 
 
 export const Orders = () => {
-    const [active, setActive] = useState('active')
-
+    const [active, setActive] = useState('Pending')
+    const loadOrders = useLoad({url: ORDER}, [])
+    const orders = loadOrders?.response ? loadOrders?.response : []
+    const filteredOrders = orders.filter(order => order.status === active);
+    
 
     return (
         <>
@@ -13,64 +19,51 @@ export const Orders = () => {
 
           {/* Top Filter Buttons */}
           <div className="flex gap-3">
-            <button onClick={() => setActive("active")} className={`px-4 py-2 ${active === 'active' ? 'bg-green-600 text-white' : 'text-gray-700 bg-gray-200'} rounded-lg text-[14px]`}>Active</button>
+            <button onClick={() => setActive("Pending")} className={`px-4 py-2 ${active === 'Pending' ? 'bg-green-600 text-white' : 'text-gray-700 bg-gray-200'} rounded-lg text-[14px]`}>Active</button>
             <button onClick={() => setActive("archived")} className={`px-4 py-2 ${active === 'archived' ? 'bg-green-600 text-white' : 'text-gray-700 bg-gray-200'} rounded-lg text-[14px]`}>Archived</button>
             <button onClick={() => setActive("canceled")} className={`px-4 py-2 ${active === 'canceled' ? 'bg-green-600 text-white' : 'text-gray-700 bg-gray-200'} rounded-lg text-[14px]`}>Canceled</button>
           </div>
 
-          {/* Order Example #1 */}
-          <div className="bg-white border shadow rounded-xl p-5">
+         {filteredOrders?.length > 0 ? (
+          filteredOrders?.map((item) => (
+          <div key={item.id} className="bg-white border shadow rounded-xl p-5">
             <div className="flex justify-between">
-              <p className="font-semibold">ORD-2024-001</p>
+              <p className="font-semibold">ORDER-{item.id}</p>
               <span className="bg-green-100 text-green-700 px-3 py-[2px] rounded-full text-[13px]">
-                Active
+                {item.status}
               </span>
             </div>
 
             <div className="flex items-center gap-2 mt-3 text-gray-500 text-[14px]">
               <Calendar size={16} />
-              November 28, 2024
+              {moment(item.createdAt).format("HH:mm:ss a")}
             </div>
 
             <div className="flex items-center gap-2 mt-2 text-gray-500 text-[14px]">
               <ClipboardList size={16} />
-              3 items
+              {item.orderItems?.length}
             </div>
 
-            <div className="mt-3 font-medium text-[16px]">$129.99</div>
+            <div className="mt-3 font-medium text-[16px]">{item.totalPrice} UZS</div>
 
             <button className="mt-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-[14px]">
               View Details
             </button>
           </div>
+         ))
+         ) : (
+          <>
+            <div className="w-full h-full pt-[100px] flex flex-col items-center justify-center">
+             <div className="flex flex-col items-center gap-[5px]">
+               <span className="text-[60px]">🔍</span>
+               <span className="font-[500] text-[16px]">No {active} found</span>
+               <span className="text-gray-400 text-[14px]">Check back soon for new products</span>
+             </div>
+             </div>
+          </>
+         )}
 
-          {/* Order Example #2 */}
-          <div className="bg-white border shadow rounded-xl p-5">
-            <div className="flex justify-between">
-              <p className="font-semibold">ORD-2024-002</p>
-              <span className="bg-green-100 text-green-700 px-3 py-[2px] rounded-full text-[13px]">
-                Active
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2 mt-3 text-gray-500 text-[14px]">
-              <Calendar size={16} />
-              November 25, 2024
-            </div>
-
-            <div className="flex items-center gap-2 mt-2 text-gray-500 text-[14px]">
-              <ClipboardList size={16} />
-              2 items
-            </div>
-
-            <div className="mt-3 font-medium text-[16px]">$89.50</div>
-
-            <button className="mt-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-[14px]">
-              View Details
-            </button>
-          </div>
-
-        </div>    
+          </div>    
         </>
     )
 }

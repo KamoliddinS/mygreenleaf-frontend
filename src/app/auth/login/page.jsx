@@ -20,16 +20,19 @@ export default function LoginPage() {
     if (success) {
       const token = response?.tokens?.accessToken;
       const role = response?.user?.role;
+      const userId = response?.user?.id
+      
 
       // Save to localStorage 
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
+      localStorage.setItem("userId", userId);
 
       // Save to cookies (for middleware)
       document.cookie = `token=${token}; path=/;`;
       document.cookie = `role=${role}; path=/;`;
 
-      // Redirect based on role
+      // // Redirect based on role
       if (role === "MasterAdmin") window.location.href = "/admin";
       else if (role === "Client") window.location.href = "/";
     } else {
