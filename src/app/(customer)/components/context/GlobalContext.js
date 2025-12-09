@@ -9,16 +9,12 @@ const GlobalContext = createContext(null);
 export const GlobalProvider = ({ children }) => {
   // Example global states
   const [openCart, setOpenCart] = useState(false);
-  const [openDetail, setOpenDetail] = useState(false)
-  const [openProductModal, setOpenProductModal] = useState(null)
 
   return (
     <GlobalContext.Provider
       value={{
         openCart,
         setOpenCart,
-        openDetail,
-        setOpenDetail
       }}
     >
       {children}
