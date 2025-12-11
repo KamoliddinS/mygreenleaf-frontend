@@ -19,7 +19,7 @@ export const Orders = () => {
         url: `${ORDER}/${id}`
       })
       if(success) {
-        toast.success("Order canceled successful");
+        toast.success("Zakaz muvofoqiyatli o`chirildi !");
         loadOrders.request()
       }
     }

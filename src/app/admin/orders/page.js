@@ -3,11 +3,12 @@ import { useState } from "react";
 import { OrderCard } from "./components/card";
 import Table from "../components/Table";
 import TableItems from "./components/TableItems";
+import { useLoad } from "@/app/shared/hooks/requests";
+import { ORDER } from "@/app/shared/utils/urls";
 
   const columns = [
     "Order ID",
     "Items",
-    "Customer",
     "Payment",
     "Total",
     "Status",
@@ -17,29 +18,18 @@ import TableItems from "./components/TableItems";
 
 export default function OrdersPage() {
   const [activeStatus, setActiveStatus] = useState("All");
+  const loadOrders = useLoad({url: ORDER}, [])
+  const orders = loadOrders?.response ? loadOrders?.response : []
+  const pendings = orders.filter((item) => item.status === "Pending")
+  const delivered = orders.filter((item) => item.status === "Delivered")
+  const canceled = orders.filter((item) => item.status === "Canceled")
+  const data = orders?.filter((item) => item.status === activeStatus)
 
   const statuses = [
-    { title: "All", count: 1 },
-    { title: "New", count: 0 },
-    { title: "Picking", count: 0 },
-    { title: "Ready", count: 1 },
-    { title: "In Transit", count: 1 },
-    { title: "Delivered", count: 0 },
-    { title: "Canceled", count: 0 },
-  ];
-
-    const orders = [
-    {
-      orderId: "0RD-2025-001",
-      items: "2 items",
-      customerName: "user-1",
-      customerLocation: "Yunusabad",
-      paymentMethod: "CLICK",
-      paymentStatus: "completed",
-      total: "157,500 UZS",
-      status: "in transit",
-      time: "4:15:00 PM",
-    },
+    { title: "All", count: orders?.length },
+    { title: "Pending", count: pendings?.length },
+    { title: "Delivered", count: delivered?.length },
+    { title: "Canceled", count: canceled?.length},
   ];
 
   return (
@@ -52,13 +42,10 @@ export default function OrdersPage() {
 
       {/* Top cards */}
       <div className="w-full grid grid-cols-6 gap-3">
-        <OrderCard value={1} title="ALL" />
-        <OrderCard value={0} title="New" />
-        <OrderCard value={0} title="Picking" />
-        <OrderCard value={1} title="Ready" />
-        <OrderCard value={1} title="In Transit" />
-        <OrderCard value={0} title="Delivered" />
-        <OrderCard value={0} title="Canceled" />
+        <OrderCard value={orders?.length} title="ALL" />
+        <OrderCard value={pendings?.length} title="Pending" />
+        <OrderCard value={delivered?.length} title="Delivered" />
+        <OrderCard value={canceled?.length} title="Canceled" />
       </div>
 
       {/* Toggle bar (status filter) */}
@@ -82,7 +69,7 @@ export default function OrdersPage() {
           })}
         </div>
       </div>
-        <Table columns={columns} data={orders} RowComponent={TableItems} />
+        <Table columns={columns} data={activeStatus === 'All' ? orders : data} RowComponent={TableItems} />
     </div>
   );
 }

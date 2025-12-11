@@ -33,7 +33,7 @@ export const ProfileInfo = () => {
       }
     })
     if(success) {
-      toast.success("User info updated successfully")
+      toast.success("Malumotingiz yangilandi")
       setEditMode(false)
       getUserInfo.request()
     }
