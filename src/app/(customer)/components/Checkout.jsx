@@ -17,7 +17,7 @@ import LocationModal from "./LocationModal";
 import { useCartStore } from "./store/cartStore";
 
 export const Checkout = ({ open, onClose, closeCart, data }) => {
-  const [active, setActive] = useState("click");
+  const [active, setActive] = useState("Click");
   const {clearCart} = useCartStore()
 
   const [openLocationModal, setOpenLocationModal] = useState(false);
@@ -75,15 +75,13 @@ const handleOrder = async () => {
     quantity: item.qty,
   }));
 
-  const { success } = await postOrder.request({
+  const { success, response } = await postOrder.request({
     data: {
       order_items: orderItems,
-      total_price: total,
-      payment_method: active,  // "click" or "payme"
-      address: userInfo?.address,
+      payment_provider_type: active
     },
   });
-
+  window.location.href = response?.paymentLink
   if (success) {
     toast.success("Order placed successfully!");
     onClose();
@@ -107,7 +105,7 @@ const handleOrder = async () => {
         </div>
 
         {/* CONTENT */}
-        <div className="flex-1 md:w-[70%] w-[100%] lg:w-[50%] mx-auto overflow-y-auto p-5 space-y-6">
+        <div className="flex-1 md:w-[70%] w-[100%] lg:w-[50%] mx-auto overflow-y-auto scrollbar-hidden p-5 space-y-6">
           {data.length === 0 && (
             <p className="text-center text-gray-500 pt-20 text-lg">
               Your cart is empty
@@ -209,12 +207,12 @@ const handleOrder = async () => {
             <span>Payment Method</span>
 
             <div
-              onClick={() => setActive("click")}
+              onClick={() => setActive("Click")}
               className={`p-[15px] flex items-center gap-[10px] border border-2 rounded-[10px] ${
-                active === "click" ? "border-green-800" : "pl-[50px]"
+                active === "Click" ? "border-green-800" : "pl-[50px]"
               } hover:border-green-800 w-full`}
             >
-              {active === "click" && <Dot className="text-green-900" />}
+              {active === "Click" && <Dot className="text-green-900" />}
               <div className="flex items-center gap-[10px]">
                 <div className="p-[10px] rounded-[10px] bg-green-700/20">
                   <CreditCard size={15} />
@@ -227,12 +225,12 @@ const handleOrder = async () => {
             </div>
 
             <div
-              onClick={() => setActive("payme")}
+              onClick={() => setActive("Payme")}
               className={`p-[15px] flex items-center gap-[10px] border border-2 rounded-[10px] ${
-                active === "payme" ? "border-green-800" : "pl-[50px]"
+                active === "Payme" ? "border-green-800" : "pl-[50px]"
               } hover:border-green-800 w-full`}
             >
-              {active === "payme" && <Dot className="text-green-900" />}
+              {active === "Payme" && <Dot className="text-green-900" />}
               <div className="flex items-center gap-[10px]">
                 <div className="p-[10px] rounded-[10px] bg-green-700/20">
                   <CreditCard size={15} />

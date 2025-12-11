@@ -53,7 +53,7 @@ export const CartPage = ({ open, onClose }) => {
           </div>
 
           {/* CONTENT */}
-          <div className="flex-1 overflow-y-auto p-5 space-y-6">
+          <div className="flex-1 overflow-y-auto scrollbar-hidden p-5 space-y-6">
             {cartItems.length === 0 ? (
               <p className="text-center text-gray-500 pt-20 text-lg">
                 Your cart is empty

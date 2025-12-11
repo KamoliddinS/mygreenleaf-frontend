@@ -5,15 +5,16 @@ import { CustomersCard } from "./components/card";
 import { Search } from "lucide-react";
 import Table from "../components/Table";
 import { TableItems } from "./components/TableItems";
+import { useLoad } from "@/app/shared/hooks/requests";
+import { USER } from "@/app/shared/utils/urls";
 
 const columns = [
-  "Customer",
+  "Email",
   "Phone",
+  "CreatedAt",
   "Location",
   "Orders",
-  "Total Spent",
-  "Avg Order",
-  "Segment",
+  "Role",
   "Actions"
 ]
 
@@ -21,44 +22,12 @@ const columns = [
 export default function CustomerPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const filterOptions = ["All Products", "In Stock", "Low Stock", "Out of Stock"];
-
+  const loadCustomers = useLoad({url: USER}, [])
+  const customers = loadCustomers?.response ? loadCustomers?.response?.filter((item) => item.role === 'Client') : []
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
-
-  const customer = [
-    {
-      user: "user-1",
-      join: "Aug 15, 2024",
-      phone: "+998903135557",
-      location: "Yunsobod",
-      orders: "13",
-      totalSpend: "1,185,000",
-      avg: "91,153.846",
-      segment: "vip"
-    },
-    {
-      user: "user-1",
-      join: "Aug 15, 2024",
-      phone: "+998903135557",
-      location: "Yunsobod",
-      orders: "13",
-      totalSpend: "1,185,000",
-      avg: "91,153.846",
-      segment: "vip"
-    },
-    {
-      user: "user-1",
-      join: "Aug 15, 2024",
-      phone: "+998903135557",
-      location: "Yunsobod",
-      orders: "13",
-      totalSpend: "1,185,000",
-      avg: "91,153.846",
-      segment: "vip"
-    }
-  ]
 
   return (
     <div className="w-full flex flex-col gap-[20px]">
@@ -67,7 +36,7 @@ export default function CustomerPage() {
       <p className="text-gray-500">View and manage customer profiles, orders, and engagement</p>
       </div>
     <div className="w-full grid grid-cols-4 gap-[20px]">
-      <CustomersCard title="Total Customers" value={7} />
+      <CustomersCard title="Total Customers" value={customers?.length} />
       <CustomersCard title="New This Month" value={2} />
       <CustomersCard title="VIP Customers" value={4} />
       <CustomersCard title="Avg CLV" value="119K" />
@@ -86,7 +55,7 @@ export default function CustomerPage() {
         </div>
         <FilterDropDown filterOptions={filterOptions} />
     </div>
-    <Table columns={columns} RowComponent={TableItems} data={customer} />
+    <Table columns={columns} RowComponent={TableItems} data={customers} setData={loadCustomers.setResponse} />
     </div>
   );
 }

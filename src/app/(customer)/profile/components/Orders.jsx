@@ -1,17 +1,28 @@
-import { act, useState } from "react"
+import { useState } from "react"
 import {Calendar, ClipboardList } from "lucide-react";
-import { useLoad } from "@/app/shared/hooks/requests";
+import { useDeleteRequest, useLoad } from "@/app/shared/hooks/requests";
 import { ORDER } from "@/app/shared/utils/urls";
 import moment from "moment";
+import { toast } from "sonner";
 
 
 
 export const Orders = () => {
     const [active, setActive] = useState('Pending')
     const loadOrders = useLoad({url: ORDER}, [])
+    const deleteOrder = useDeleteRequest()
     const orders = loadOrders?.response ? loadOrders?.response : []
     const filteredOrders = orders.filter(order => order.status === active);
     
+    const handleDelete = async (id) => {
+      const {success} = await deleteOrder.request({
+        url: `${ORDER}/${id}`
+      })
+      if(success) {
+        toast.success("Order canceled successful");
+        loadOrders.request()
+      }
+    }
 
     return (
         <>
@@ -45,10 +56,14 @@ export const Orders = () => {
             </div>
 
             <div className="mt-3 font-medium text-[16px]">{item.totalPrice} UZS</div>
-
+            <div className="flex items-center gap-[20px]">
             <button className="mt-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-[14px]">
               View Details
             </button>
+            <button onClick={() => handleDelete(item.id)} className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-[14px]">
+              Cancel
+            </button>
+            </div>
           </div>
          ))
          ) : (
