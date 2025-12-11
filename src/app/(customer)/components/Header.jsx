@@ -17,7 +17,7 @@ export const Header = () => {
   const [token, setToken] = useState('')
   const [userId, setUserId] = useState('')
   const [cartSafe, setCartSafe] = useState({});
-  const {openCart, setOpenCart} = useGlobalContext()
+  const {openCart, setOpenCart, setOpenAuth} = useGlobalContext()
   const getMe = useLoad({url: ME})
   const userInfo = getMe?.response ? getMe?.response : []
   const postAddress = usePatchRequest({url: `${USER}${userId}`})
@@ -35,7 +35,7 @@ useEffect(() => {
   // Safely get icons
   const { SearchIcon, ShoppingCart, User, MapPin } = Icons;
 
-    const handleLocationSelected = async (loc) => {
+  const handleLocationSelected = async (loc) => {
       console.log(loc);
       
       const {success} = await postAddress.request({
@@ -52,9 +52,9 @@ useEffect(() => {
       }
   }
 
-    const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyDAfvQNep6qw_BRwuXS8XYGugJgpvSWduU",
-    libraries: ["places"],
+  const { isLoaded } = useJsApiLoader({
+  googleMapsApiKey: "AIzaSyDAfvQNep6qw_BRwuXS8XYGugJgpvSWduU",
+  libraries: ["places"],
   });
 
   // Get cart from store (client-side only)
@@ -74,7 +74,7 @@ useEffect(() => {
 
   const handleOpenCart = () => {
     if(!token) {
-      toast.warning("Please register or login to order !")
+      setOpenAuth(true)
     } else {
       setOpenCart(true)
     }
@@ -98,7 +98,7 @@ useEffect(() => {
           {userId && (
             <div onClick={() => setOpenLocationModal(true)} className="cursor-pointer px-[15px] py-[10px] flex items-center gap-[10px] border bg-green-600/20 rounded-[10px]">
             <MapPin size={15} className="text-green-600" />
-            <span className="text-[12px]">{userInfo?.address?.substring(10)}</span>
+            <span className="text-[12px]">{userInfo?.address ? userInfo?.address?.slice(0, 20) : 'Choose address'}</span>
           </div>
           )}
 

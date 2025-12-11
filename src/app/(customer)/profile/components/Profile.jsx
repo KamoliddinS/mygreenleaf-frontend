@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 export const ProfileInfo = () => {
   const getUserInfo = useLoad({ url: ME });
+  const [expanded, setExpanded] = useState(false);
   const userInfo = getUserInfo?.response ? getUserInfo?.response : [];
   const updateUserInfo = usePatchRequest({url: `${USER}${userInfo?.id}`})
 
@@ -38,11 +39,20 @@ export const ProfileInfo = () => {
     }
   };
 
+    const limit = 30; 
+
+  const isLong = userInfo?.address?.length > limit;
+  const displayAddress = expanded
+    ? userInfo?.address
+    : isLong
+    ? userInfo?.address.slice(0, limit) + "..."
+    : userInfo?.address;
+
   return (
     <div className="flex flex-col gap-4">
       
       {/* Card */}
-      <div className="bg-white shadow rounded-xl p-6 border relative">
+      <div className="bg-white shadow rounded-xl p-4 md:p-6 border relative">
 
         {/* Title + edit icon */}
         <div className="flex items-center justify-between mb-4">
@@ -117,15 +127,26 @@ export const ProfileInfo = () => {
         </div>
 
         {/* Address */}
-        <div className="flex items-start gap-4">
-          <MapPin className="text-gray-500" size={20} />
-          <div>
-            <p className="text-[14px] text-gray-600">Address</p>
-            <p className="text-[15px] font-medium">
-              {userInfo?.address || "-----------"}
-            </p>
-          </div>
-        </div>
+       <div className="flex items-start gap-4">
+      <MapPin className="text-gray-500 flex-shrink-0" size={20} />
+
+      <div className="flex flex-col">
+        <p className="text-[14px] text-gray-600">Address</p>
+
+        <p className="text-[12px] md:text-[14px] font-medium leading-[16px] max-w-[250px]">
+          {displayAddress}
+        </p>
+
+        {isLong && (
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="text-green-600 text-[12px] mt-1 underline"
+          >
+            {expanded ? "Show less" : "Show more"}
+          </button>
+        )}
+      </div>
+    </div>
 
         {/* Save Button */}
         {editMode && (

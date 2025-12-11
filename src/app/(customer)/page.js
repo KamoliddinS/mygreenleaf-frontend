@@ -7,6 +7,7 @@ import { BottomCartBar } from "./components/BottomCartbar";
 import Filter from "./components/Filter";
 import { useEffect, useState } from "react";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { AuthModal } from "./components/auth/AuthModal";
 
 export default function CustomerHome() {
   const [bId, setbId] = useState(null)
@@ -25,7 +26,8 @@ export default function CustomerHome() {
   
 
   return (
-    <div className="w-full h-full relative pb-[120px]">
+   <>
+     <div className="w-full h-full relative pb-[120px]">
         <Filter setcId={setcId} setbId={setbId} />
       <div className="w-full h-full">
 
@@ -70,5 +72,7 @@ export default function CustomerHome() {
       {/* 👇 Bottom bar */}
       <BottomCartBar />
     </div>
+    <AuthModal />
+   </>
   );
 }

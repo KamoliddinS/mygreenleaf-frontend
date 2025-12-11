@@ -32,7 +32,7 @@ export default function Modal({ open, onClose, children }) {
         <button
           onClick={onClose}
           aria-label="Close modal"
-          className="absolute -top-4 -right-4 w-10 h-10 flex items-center justify-center 
+          className="absolute -top-3 md:-top-4 md:-right-4 -right-2 w-10 h-10 flex items-center justify-center 
                      rounded-full bg-white shadow-lg border border-gray-200
                      hover:bg-gray-100 transition z-50"
         >
@@ -50,7 +50,7 @@ export default function Modal({ open, onClose, children }) {
 
         {/* Modal Content */}
         <div
-          className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 animate-modal"
+          className="bg-white rounded-2xl shadow-xl w-full max-w-md p-2 animate-modal"
           onClick={(e) => e.stopPropagation()}
         >
           {children}

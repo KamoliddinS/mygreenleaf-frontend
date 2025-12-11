@@ -9,12 +9,15 @@ const GlobalContext = createContext(null);
 export const GlobalProvider = ({ children }) => {
   // Example global states
   const [openCart, setOpenCart] = useState(false);
+  const [openAuth, setOpenAuth] = useState(false);
 
   return (
     <GlobalContext.Provider
       value={{
         openCart,
         setOpenCart,
+        openAuth,
+        setOpenAuth
       }}
     >
       {children}

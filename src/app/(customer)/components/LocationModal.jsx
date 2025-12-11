@@ -94,7 +94,7 @@ export default function LocationModal({
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className="relative bg-white rounded-2xl p-6 w-full max-w-md shadow-xl"
+            className="relative bg-white rounded-2xl p-6 w-[95%] min-w-[350px] max-w-[400px] max-h-[90vh] oveflow-y-auto shadow-xl"
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}

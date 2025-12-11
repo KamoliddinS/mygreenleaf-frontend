@@ -67,7 +67,7 @@ export const Checkout = ({ open, onClose, closeCart, data }) => {
 
 const handleOrder = async () => {
   if(!userInfo?.address) {
-    toast.warning("Please add your address to order !")
+    setOpenLocationModal(true)
   } else {
     // Build order_items from cart data
   const orderItems = data.map((item) => ({

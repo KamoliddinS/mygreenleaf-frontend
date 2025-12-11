@@ -88,7 +88,15 @@ export const ProductDetail = ({ open, onClose, data }) => {
   const loadRating = useLoad({url: RATING, params: {product_id: data?.id}}, [])
   const rating = loadRating?.response ? loadRating?.response : []
   const setData = loadRating?.setResponse
-  const {setOpenCart} = useGlobalContext()
+  const {setOpenCart, setOpenAuth} = useGlobalContext()
+
+    const averageRating =
+  rating.length > 0
+    ? (
+        rating.reduce((sum, r) => sum + (r?.value || 0), 0) /
+        rating.length
+      ).toFixed(1)
+    : 0;
 
   useEffect(() => {
     const tokenInfo = localStorage.getItem("token")
@@ -121,7 +129,7 @@ export const ProductDetail = ({ open, onClose, data }) => {
   const handleCommentSubmit = async () => {
     if (!commentText) return;
     if(!token) { 
-      toast.warning("Please login or register to add comment")
+      setOpenAuth(true)
     }
     const {success, response} = await postRating.request({
       data: {
@@ -142,7 +150,7 @@ export const ProductDetail = ({ open, onClose, data }) => {
 
   const handleRedirect = () => {
     if(!token) {
-      toast.warning("Please register or login to order !")
+      setOpenAuth(true)
     } else {
       onClose()
     setOpenCart(true)
@@ -199,7 +207,7 @@ export const ProductDetail = ({ open, onClose, data }) => {
                 <div className="flex items-center gap-[10px]">
                   <div className="flex items-center gap-[5px]">
                     <Star size={20} className="text-yellow-400" />
-                    <span>4.9</span>
+                    <span>{averageRating}</span>
                   </div>
 
                   <span className="text-gray-500">({rating?.length} reviews)</span>

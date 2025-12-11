@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 export const BottomCartBar = () => {
   const [token, setToken] = useState('')
   const cart = useCartStore((state) => state.cart);
-  const {setOpenCart} = useGlobalContext()
+  const {setOpenCart, setOpenAuth} = useGlobalContext()
   
    useEffect(() => {
     const tokenInfo = localStorage.getItem("token")
@@ -28,7 +28,7 @@ export const BottomCartBar = () => {
 
   const handleOpen = () => {
     if(!token) {
-      toast.warning("Please login or register for ordering !")
+      setOpenAuth(true)
     } else {
       setOpenCart(true)
     }
