@@ -135,7 +135,7 @@ export default function RegisterPage({onToggle}) {
 
         <p className="text-center text-gray-600 mt-6">
           Already have an account?
-          <span onClick={handleRedirect} className="text-green-500 font-medium ml-1">
+          <span onClick={handleRedirect} className="text-green-500 cursor-pointer font-medium ml-1">
             Login
           </span>
         </p>
