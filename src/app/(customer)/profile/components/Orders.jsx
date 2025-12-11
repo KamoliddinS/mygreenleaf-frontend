@@ -4,6 +4,7 @@ import { useDeleteRequest, useLoad } from "@/app/shared/hooks/requests";
 import { ORDER } from "@/app/shared/utils/urls";
 import moment from "moment";
 import { toast } from "sonner";
+import { OrderDetail } from "./OrdersDetail";
 
 
 
@@ -57,12 +58,12 @@ export const Orders = () => {
 
             <div className="mt-3 font-medium text-[16px]">{item.totalPrice} UZS</div>
             <div className="flex items-center gap-[20px]">
-            <button className="mt-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-[14px]">
-              View Details
-            </button>
-            <button onClick={() => handleDelete(item.id)} className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-[14px]">
+            <OrderDetail ids={item.orderItems?.map(i => i.productId)} />
+            {item.status !== 'Delivered' && (
+              <button onClick={() => handleDelete(item.id)} className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-[14px]">
               Cancel
-            </button>
+              </button>
+            )}
             </div>
           </div>
          ))

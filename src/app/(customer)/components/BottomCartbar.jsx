@@ -3,7 +3,6 @@
 import { MoveRight } from "lucide-react";
 import { useCartStore } from "./store/cartStore";
 import { useGlobalContext } from "./context/GlobalContext";
-import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
 export const BottomCartBar = () => {
@@ -13,8 +12,7 @@ export const BottomCartBar = () => {
   
    useEffect(() => {
     const tokenInfo = localStorage.getItem("token")
-    console.log(tokenInfo);
-    
+  
     setToken(tokenInfo)
   }, [])
 
