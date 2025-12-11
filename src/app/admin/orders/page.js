@@ -12,8 +12,7 @@ import { ORDER } from "@/app/shared/utils/urls";
     "Payment",
     "Total",
     "Status",
-    "Time",
-    "Actions",
+    "Time"
   ];
 
 export default function OrdersPage() {

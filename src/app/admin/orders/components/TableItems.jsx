@@ -17,18 +17,13 @@ export default function TableItems({ item }) {
           <span>{item.paymentProviderType ? item.paymentProviderType : '----'}</span>
         </div>
       </td>
-      <td className="px-4 py-3 text-sm">{item.totalPrice} UZS</td>
+      <td className="px-4 py-3 text-sm">{item.totalPrice.toLocaleString()} UZS</td>
       <td className="px-4 py-3 text-sm">
         <span className="w-auto text-black font-[500] text-md px-3 py-1 rounded-full flex items-center gap-1">
           🚚 {item.status}
         </span>
       </td>
-      <td className="px-4 py-3 text-sm">{moment(item.createdAt).format('YYYY:MM:DD')}</td>
-      <td className="px-4 py-3 text-sm">
-        <button className="text-gray-600 hover:text-black flex items-center gap-1">
-          <Eye size={16} /> View
-        </button>
-      </td>
+      <td className="px-4 py-3 text-sm">{moment(item.createdAt).format('YYYY:MM:DD , HH:mm:ss')}</td>
     </tr>
   );
 }
